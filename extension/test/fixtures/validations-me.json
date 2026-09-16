@@ -1,0 +1,57 @@
+{
+  "blocks": [
+    {
+      "id": 322,
+      "title": "Decision-Making and Architectural Choices",
+      "learningOutcomes": [
+        { "id": 808, "acquiredPoints": 0, "totalPoints": 4 },
+        { "id": 809, "acquiredPoints": 0, "totalPoints": 3 },
+        { "id": 807, "acquiredPoints": 0, "totalPoints": 3 }
+      ],
+      "projectedGrade": "A",
+      "credits": 2
+    },
+    {
+      "id": 232,
+      "title": "Deepening of offensive cybersecurity - Active Directory",
+      "learningOutcomes": [
+        { "id": 817, "acquiredPoints": 0, "totalPoints": 30 },
+        { "id": 815, "acquiredPoints": 0, "totalPoints": 8 },
+        { "id": 814, "acquiredPoints": 0, "totalPoints": 9 },
+        { "id": 816, "acquiredPoints": 0, "totalPoints": 9 }
+      ],
+      "projectedGrade": "C",
+      "credits": 6
+    },
+    {
+      "id": 231,
+      "title": "G-AIA-500 - Intelligent Agent Systems",
+      "learningOutcomes": [],
+      "projectedGrade": "Fail",
+      "credits": 6
+    },
+    {
+      "id": 244,
+      "title": "G-SVR-500 - Customer Relationship Management",
+      "learningOutcomes": [
+        { "id": 775, "acquiredPoints": 16, "totalPoints": 17 },
+        { "id": 776, "acquiredPoints": 12, "totalPoints": 12 },
+        { "id": 774, "acquiredPoints": 14, "totalPoints": 14 },
+        { "id": 773, "acquiredPoints": 8, "totalPoints": 12 },
+        { "id": 772, "acquiredPoints": 10, "totalPoints": 12 }
+      ],
+      "projectedGrade": "A",
+      "credits": 4
+    },
+    {
+      "id": 238,
+      "title": "G-PRO-510 - Professional Communication",
+      "learningOutcomes": [
+        { "id": 787, "acquiredPoints": 0, "totalPoints": 0 },
+        { "id": 788, "acquiredPoints": 0, "totalPoints": 0 }
+      ],
+      "projectedGrade": "Fail",
+      "credits": 2
+    }
+  ]
+}
