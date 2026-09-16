@@ -64,8 +64,8 @@
   }
 
   function moduleRow(m) {
-    const avg = m.averageLevel !== null && m.averageLevel !== undefined
-      ? m.averageLevel.toFixed(2)
+    const avg = m.averageScore !== null && m.averageScore !== undefined
+      ? `${m.averageScore.toFixed(0)}/500`
       : "—";
     const progress = m.totalCount ? `${m.validatedCount ?? 0}/${m.totalCount}` : "—";
 
@@ -111,7 +111,7 @@
 
     const thead = document.createElement("thead");
     const headRow = document.createElement("tr");
-    ["Module", "Note", "Moy. niveau /5", "Comp.", "Créd."].forEach((label) => {
+    ["Module", "Note", "Moy. score", "Comp.", "Créd."].forEach((label) => {
       const th = document.createElement("th");
       th.textContent = label;
       headRow.appendChild(th);

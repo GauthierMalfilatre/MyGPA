@@ -17,10 +17,10 @@ function gradeValue(grade) {
     : null;
 }
 
-function averageLevel(block) {
+function averageScore(block) {
   const outcomes = block.learningOutcomes || [];
   if (outcomes.length === 0) return null;
-  const sum = outcomes.reduce((acc, outcome) => acc + (outcome.level || 0), 0);
+  const sum = outcomes.reduce((acc, outcome) => acc + (outcome.score || 0), 0);
   return sum / outcomes.length;
 }
 
@@ -48,7 +48,7 @@ function computeRealGpa(validationsPayload) {
       credits: block.credits,
       projectedGrade: block.projectedGrade,
       value,
-      averageLevel: averageLevel(block),
+      averageScore: averageScore(block),
       validatedCount: block.validatedCount ?? null,
       totalCount: block.totalCount ?? null,
     });

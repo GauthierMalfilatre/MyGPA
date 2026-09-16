@@ -39,6 +39,13 @@ test("mixed progress: weights multiple started modules by credits", () => {
   assert.equal(result.gpa, 2.5);
 });
 
+test("computes average score (0-500 scale) per included module", () => {
+  const result = computeRealGpa(fixture);
+  // (450 + 500 + 500 + 267 + 350) / 5 = 2067 / 5 = 413.4
+  const module = result.includedModules.find((m) => m.id === 244);
+  assert.ok(Math.abs(module.averageScore - 413.4) < 1e-9);
+});
+
 test("computeRealGpa reads prior credits from the validations payload", () => {
   const payload = { ...fixture, totalAcquiredCredits: 120 };
   const result = computeRealGpa(payload);

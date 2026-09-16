@@ -34,11 +34,11 @@
       "id": 244,
       "title": "G-SVR-500 - Customer Relationship Management",
       "learningOutcomes": [
-        { "id": 775, "acquiredPoints": 16, "totalPoints": 17 },
-        { "id": 776, "acquiredPoints": 12, "totalPoints": 12 },
-        { "id": 774, "acquiredPoints": 14, "totalPoints": 14 },
-        { "id": 773, "acquiredPoints": 8, "totalPoints": 12 },
-        { "id": 772, "acquiredPoints": 10, "totalPoints": 12 }
+        { "id": 775, "acquiredPoints": 16, "totalPoints": 17, "score": 450 },
+        { "id": 776, "acquiredPoints": 12, "totalPoints": 12, "score": 500 },
+        { "id": 774, "acquiredPoints": 14, "totalPoints": 14, "score": 500 },
+        { "id": 773, "acquiredPoints": 8, "totalPoints": 12, "score": 267 },
+        { "id": 772, "acquiredPoints": 10, "totalPoints": 12, "score": 350 }
       ],
       "projectedGrade": "A",
       "credits": 4
