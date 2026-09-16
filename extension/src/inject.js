@@ -1,5 +1,5 @@
 (function () {
-  const EVENT_NAME = "kronk-gpa:auth-token";
+  const EVENT_NAME = "mygpa:auth-token";
 
   function announceToken(token) {
     if (!token) return;

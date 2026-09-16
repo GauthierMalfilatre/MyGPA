@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Kronk GPA — Real GPA for My Epitech",
+  "name": "MyGPA — Real GPA for My Epitech",
   "version": "0.1.0",
   "description": "Calcule et affiche en direct ton vrai GPA sur my.epitech.eu, basé sur les niveaux de compétences (XP) par module plutôt que sur le GPA officiel mis à jour en fin de semestre.",
   "icons": {
@@ -28,7 +28,7 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "kronk-gpa@meursmartin.local",
+      "id": "mygpa@meursmartin.local",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
         "required": ["none"]

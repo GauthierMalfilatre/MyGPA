@@ -1,5 +1,5 @@
 (function () {
-  const WIDGET_ID = "kronk-gpa-widget";
+  const WIDGET_ID = "mygpa-widget";
   const GRADE_OPTIONS = ["A", "B", "C", "D", "Fail"];
   let expanded = false;
   let simulating = false;
@@ -13,28 +13,28 @@
       el.id = WIDGET_ID;
 
       const summary = document.createElement("div");
-      summary.className = "kronk-gpa-summary";
+      summary.className = "mygpa-summary";
 
       const header = document.createElement("div");
-      header.className = "kronk-gpa-header";
+      header.className = "mygpa-header";
       header.textContent = "GPA réel";
 
       const value = document.createElement("div");
-      value.className = "kronk-gpa-value";
+      value.className = "mygpa-value";
       value.textContent = "—";
 
       const detail = document.createElement("div");
-      detail.className = "kronk-gpa-detail";
+      detail.className = "mygpa-detail";
 
       summary.append(header, value, detail);
 
       const panel = document.createElement("div");
-      panel.className = "kronk-gpa-panel";
+      panel.className = "mygpa-panel";
 
       el.append(summary, panel);
 
       el.addEventListener("click", (event) => {
-        if (event.target.closest(".kronk-gpa-panel")) return;
+        if (event.target.closest(".mygpa-panel")) return;
         toggleExpanded();
       });
       document.body.appendChild(el);
@@ -46,7 +46,7 @@
     expanded = !expanded;
     const el = document.getElementById(WIDGET_ID);
     if (!el) return;
-    el.classList.toggle("kronk-gpa-expanded", expanded);
+    el.classList.toggle("mygpa-expanded", expanded);
     if (expanded && lastResult) {
       renderPanel(lastResult);
     }
@@ -80,13 +80,13 @@
       cell(progress),
       cell(String(m.credits))
     );
-    if (m.simulated) tr.classList.add("kronk-gpa-simulated-row");
+    if (m.simulated) tr.classList.add("mygpa-simulated-row");
     return tr;
   }
 
   function gradeSelect(moduleId) {
     const select = document.createElement("select");
-    select.className = "kronk-gpa-grade-select";
+    select.className = "mygpa-grade-select";
 
     const noneOption = document.createElement("option");
     noneOption.value = "";
@@ -128,10 +128,10 @@
 
   function renderSimulationPanel(overall) {
     const container = document.createElement("div");
-    container.className = "kronk-gpa-sim";
+    container.className = "mygpa-sim";
 
     const table = document.createElement("table");
-    table.className = "kronk-gpa-table";
+    table.className = "mygpa-table";
 
     const thead = document.createElement("thead");
     const headRow = document.createElement("tr");
@@ -154,16 +154,16 @@
     table.append(thead, tbody);
     container.appendChild(table);
 
-    const simulated = window.KronkGpa.simulateGpa(overall, simOverrides);
+    const simulated = window.MyGpa.simulateGpa(overall, simOverrides);
     const result = document.createElement("div");
-    result.className = "kronk-gpa-sim-result";
+    result.className = "mygpa-sim-result";
     const simText = simulated.gpa !== null ? simulated.gpa.toFixed(2) : "—";
     result.textContent = `GPA simulé : ${simText}`;
     container.appendChild(result);
 
     const resetBtn = document.createElement("button");
     resetBtn.type = "button";
-    resetBtn.className = "kronk-gpa-reset";
+    resetBtn.className = "mygpa-reset";
     resetBtn.textContent = "Réinitialiser la simulation";
     resetBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -178,11 +178,11 @@
   function renderPanel(overall) {
     const el = document.getElementById(WIDGET_ID);
     if (!el) return;
-    const panel = el.querySelector(".kronk-gpa-panel");
+    const panel = el.querySelector(".mygpa-panel");
     panel.textContent = "";
 
     const summary = document.createElement("div");
-    summary.className = "kronk-gpa-blend";
+    summary.className = "mygpa-blend";
     const officialText = overall.officialGpa !== null && overall.officialGpa !== undefined
       ? overall.officialGpa.toFixed(2)
       : "—";
@@ -194,7 +194,7 @@
 
     const toggleBtn = document.createElement("button");
     toggleBtn.type = "button";
-    toggleBtn.className = "kronk-gpa-sim-toggle";
+    toggleBtn.className = "mygpa-sim-toggle";
     toggleBtn.textContent = simulating ? "Fermer la simulation" : "Simuler mes notes";
     toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -211,14 +211,14 @@
     const modules = overall.currentPeriod.includedModules || [];
     if (!modules.length) {
       const empty = document.createElement("div");
-      empty.className = "kronk-gpa-empty";
+      empty.className = "mygpa-empty";
       empty.textContent = "Aucun module avec progression pour l'instant.";
       panel.appendChild(empty);
       return;
     }
 
     const table = document.createElement("table");
-    table.className = "kronk-gpa-table";
+    table.className = "mygpa-table";
 
     const thead = document.createElement("thead");
     const headRow = document.createElement("tr");
@@ -241,9 +241,9 @@
     if (!el) return;
     lastResult = overall;
 
-    const valueEl = el.querySelector(".kronk-gpa-value");
-    const detailEl = el.querySelector(".kronk-gpa-detail");
-    el.classList.remove("kronk-gpa-error", "kronk-gpa-stale");
+    const valueEl = el.querySelector(".mygpa-value");
+    const detailEl = el.querySelector(".mygpa-detail");
+    el.classList.remove("mygpa-error", "mygpa-stale");
 
     if (overall.gpa === null) {
       valueEl.textContent = "N/A";
@@ -258,7 +258,7 @@
     }
 
     if (options.stale) {
-      el.classList.add("kronk-gpa-stale");
+      el.classList.add("mygpa-stale");
     }
 
     if (expanded) {
@@ -269,10 +269,10 @@
   function renderError(err) {
     const el = ensureWidget();
     if (!el) return;
-    const valueEl = el.querySelector(".kronk-gpa-value");
-    const detailEl = el.querySelector(".kronk-gpa-detail");
-    el.classList.add("kronk-gpa-error");
-    el.classList.remove("kronk-gpa-stale");
+    const valueEl = el.querySelector(".mygpa-value");
+    const detailEl = el.querySelector(".mygpa-detail");
+    el.classList.add("mygpa-error");
+    el.classList.remove("mygpa-stale");
     valueEl.textContent = "Erreur";
     detailEl.textContent = err?.message || "Impossible de calculer le GPA.";
   }
@@ -280,16 +280,16 @@
   function renderSessionExpired() {
     const el = ensureWidget();
     if (!el) return;
-    const valueEl = el.querySelector(".kronk-gpa-value");
-    const detailEl = el.querySelector(".kronk-gpa-detail");
-    el.classList.add("kronk-gpa-error");
-    el.classList.remove("kronk-gpa-stale");
+    const valueEl = el.querySelector(".mygpa-value");
+    const detailEl = el.querySelector(".mygpa-detail");
+    el.classList.add("mygpa-error");
+    el.classList.remove("mygpa-stale");
     valueEl.textContent = "Session expirée";
     detailEl.textContent = "Recharge la page et reconnecte-toi pour continuer.";
   }
 
-  window.KronkGpa = window.KronkGpa || {};
-  Object.assign(window.KronkGpa, {
+  window.MyGpa = window.MyGpa || {};
+  Object.assign(window.MyGpa, {
     mountWidget,
     renderWidget,
     renderError,

@@ -1,4 +1,4 @@
-#kronk-gpa-widget {
+#mygpa-widget {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -18,14 +18,14 @@
   cursor: pointer;
 }
 
-:root[data-mantine-color-scheme="light"] #kronk-gpa-widget {
+:root[data-mantine-color-scheme="light"] #mygpa-widget {
   background: #ffffff;
   color: #181818;
   border: 1px solid rgba(24, 24, 24, 0.14);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
-#kronk-gpa-widget .kronk-gpa-header {
+#mygpa-widget .mygpa-header {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -33,29 +33,29 @@
   margin-bottom: 4px;
 }
 
-#kronk-gpa-widget .kronk-gpa-value {
+#mygpa-widget .mygpa-value {
   font-size: 28px;
   font-weight: 700;
   line-height: 1;
   color: #013afb;
 }
 
-#kronk-gpa-widget.kronk-gpa-error .kronk-gpa-value {
+#mygpa-widget.mygpa-error .mygpa-value {
   color: #ff5f3a;
   font-size: 18px;
 }
 
-#kronk-gpa-widget.kronk-gpa-stale .kronk-gpa-value {
+#mygpa-widget.mygpa-stale .mygpa-value {
   opacity: 0.55;
 }
 
-#kronk-gpa-widget .kronk-gpa-detail {
+#mygpa-widget .mygpa-detail {
   margin-top: 6px;
   font-size: 12px;
   opacity: 0.7;
 }
 
-#kronk-gpa-widget .kronk-gpa-panel {
+#mygpa-widget .mygpa-panel {
   display: none;
   margin-top: 12px;
   padding-top: 12px;
@@ -63,32 +63,32 @@
   cursor: default;
 }
 
-:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-panel {
+:root[data-mantine-color-scheme="light"] #mygpa-widget .mygpa-panel {
   border-top: 1px solid rgba(24, 24, 24, 0.14);
 }
 
-#kronk-gpa-widget.kronk-gpa-expanded .kronk-gpa-panel {
+#mygpa-widget.mygpa-expanded .mygpa-panel {
   display: block;
 }
 
-#kronk-gpa-widget .kronk-gpa-empty {
+#mygpa-widget .mygpa-empty {
   font-size: 12px;
   opacity: 0.7;
 }
 
-#kronk-gpa-widget .kronk-gpa-blend {
+#mygpa-widget .mygpa-blend {
   font-size: 11px;
   opacity: 0.7;
   margin-bottom: 10px;
 }
 
-#kronk-gpa-widget .kronk-gpa-table {
+#mygpa-widget .mygpa-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
 }
 
-#kronk-gpa-widget .kronk-gpa-table th {
+#mygpa-widget .mygpa-table th {
   text-align: left;
   font-weight: 500;
   text-transform: uppercase;
@@ -99,25 +99,25 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-table th {
+:root[data-mantine-color-scheme="light"] #mygpa-widget .mygpa-table th {
   border-bottom: 1px solid rgba(24, 24, 24, 0.14);
 }
 
-#kronk-gpa-widget .kronk-gpa-table td {
+#mygpa-widget .mygpa-table td {
   padding: 5px 6px 5px 0;
   vertical-align: top;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-table td {
+:root[data-mantine-color-scheme="light"] #mygpa-widget .mygpa-table td {
   border-bottom: 1px solid rgba(24, 24, 24, 0.06);
 }
 
-#kronk-gpa-widget .kronk-gpa-table tr:last-child td {
+#mygpa-widget .mygpa-table tr:last-child td {
   border-bottom: none;
 }
 
-#kronk-gpa-widget .kronk-gpa-sim-toggle {
+#mygpa-widget .mygpa-sim-toggle {
   display: block;
   width: 100%;
   margin-bottom: 10px;
@@ -133,11 +133,11 @@
   cursor: pointer;
 }
 
-#kronk-gpa-widget .kronk-gpa-sim-toggle:hover {
+#mygpa-widget .mygpa-sim-toggle:hover {
   background: rgba(1, 58, 251, 0.2);
 }
 
-#kronk-gpa-widget .kronk-gpa-grade-select {
+#mygpa-widget .mygpa-grade-select {
   font-family: inherit;
   font-size: 12px;
   background: transparent;
@@ -147,26 +147,26 @@
   padding: 2px 4px;
 }
 
-:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-grade-select {
+:root[data-mantine-color-scheme="light"] #mygpa-widget .mygpa-grade-select {
   border: 1px solid rgba(24, 24, 24, 0.25);
 }
 
-#kronk-gpa-widget .kronk-gpa-grade-select option {
+#mygpa-widget .mygpa-grade-select option {
   color: #181818;
 }
 
-#kronk-gpa-widget .kronk-gpa-simulated-row td:first-child {
+#mygpa-widget .mygpa-simulated-row td:first-child {
   font-style: italic;
 }
 
-#kronk-gpa-widget .kronk-gpa-sim-result {
+#mygpa-widget .mygpa-sim-result {
   margin-top: 10px;
   font-size: 16px;
   font-weight: 700;
   color: #013afb;
 }
 
-#kronk-gpa-widget .kronk-gpa-reset {
+#mygpa-widget .mygpa-reset {
   display: block;
   margin-top: 8px;
   padding: 5px 10px;
@@ -179,10 +179,10 @@
   cursor: pointer;
 }
 
-:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-reset {
+:root[data-mantine-color-scheme="light"] #mygpa-widget .mygpa-reset {
   border: 1px solid rgba(24, 24, 24, 0.2);
 }
 
-#kronk-gpa-widget .kronk-gpa-reset:hover {
+#mygpa-widget .mygpa-reset:hover {
   opacity: 1;
 }

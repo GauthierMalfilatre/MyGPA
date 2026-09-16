@@ -145,6 +145,6 @@ function simulateGpa(overall, overrides) {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES };
 } else if (typeof window !== "undefined") {
-  window.KronkGpa = window.KronkGpa || {};
-  Object.assign(window.KronkGpa, { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES });
+  window.MyGpa = window.MyGpa || {};
+  Object.assign(window.MyGpa, { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES });
 }

@@ -1,6 +1,6 @@
-# Kronk GPA
+# MyGPA
 
-Extension Firefox qui calcule et affiche en direct le GPA réel sur [my.epitech.eu](https://my.epitech.eu), basé sur les niveaux de compétences (XP) par module plutôt que sur le GPA officiel, qui n'est mis à jour qu'en fin de semestre.
+Extension Firefox/Chrome qui calcule et affiche en direct le GPA réel sur [my.epitech.eu](https://my.epitech.eu), basé sur les niveaux de compétences (XP) par module plutôt que sur le GPA officiel, qui n'est mis à jour qu'en fin de semestre.
 
 ## Fonctionnement
 

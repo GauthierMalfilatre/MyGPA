@@ -2,8 +2,8 @@
   const VALIDATIONS_PATH = "/api/evaluations/validations/me";
   const PROFILE_PATH = "/api/students/profile";
   const REFRESH_INTERVAL_MS = 60 * 1000;
-  const AUTH_EVENT = "kronk-gpa:auth-token";
-  const STORAGE_KEY = "kronkGpaLastResult";
+  const AUTH_EVENT = "mygpa:auth-token";
+  const STORAGE_KEY = "myGpaLastResult";
 
   let latestToken = null;
   let tokenExpiresAt = null;
@@ -71,7 +71,7 @@
       const stored = await chrome.storage.local.get(STORAGE_KEY);
       const entry = stored?.[STORAGE_KEY];
       if (entry?.overall) {
-        window.KronkGpa.renderWidget(entry.overall, { stale: true });
+        window.MyGpa.renderWidget(entry.overall, { stale: true });
       }
     } catch (_) {
       // storage unavailable, non-fatal
@@ -81,7 +81,7 @@
   async function refreshGpa() {
     if (!latestToken) return;
     if (isTokenExpired()) {
-      window.KronkGpa.renderSessionExpired();
+      window.MyGpa.renderSessionExpired();
       return;
     }
     try {
@@ -89,15 +89,15 @@
         fetchJson(VALIDATIONS_PATH, latestToken),
         fetchJson(PROFILE_PATH, latestToken),
       ]);
-      const currentPeriod = window.KronkGpa.computeRealGpa(validations);
-      const overall = window.KronkGpa.computeOverallGpa(currentPeriod, profile);
-      window.KronkGpa.renderWidget(overall);
+      const currentPeriod = window.MyGpa.computeRealGpa(validations);
+      const overall = window.MyGpa.computeOverallGpa(currentPeriod, profile);
+      window.MyGpa.renderWidget(overall);
       persistResult(overall);
     } catch (err) {
       if (err.message === "SESSION_EXPIRED") {
-        window.KronkGpa.renderSessionExpired();
+        window.MyGpa.renderSessionExpired();
       } else {
-        window.KronkGpa.renderError(err);
+        window.MyGpa.renderError(err);
       }
     }
   }
@@ -108,7 +108,7 @@
   }
 
   injectPageScript();
-  window.KronkGpa.mountWidget();
+  window.MyGpa.mountWidget();
   restoreLastResult();
   startAutoRefresh();
 })();
