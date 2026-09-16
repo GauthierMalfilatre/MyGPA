@@ -59,9 +59,14 @@ function computeRealGpa(validationsPayload) {
 
   const gpa = totalCredits > 0 ? weightedSum / totalCredits : null;
 
+  const priorCredits = validationsPayload?.totalAcquiredCredits
+    ?? validationsPayload?.acquiredCredits
+    ?? 0;
+
   return {
     gpa,
     totalCredits,
+    priorCredits,
     includedModules: included,
     excludedModules: excluded.map((b) => ({ id: b.id, title: b.title })),
   };
@@ -71,7 +76,7 @@ function computeOverallGpa(currentPeriod, profile) {
   const officialGpa = profile?.gpa !== undefined && profile?.gpa !== null
     ? parseFloat(profile.gpa)
     : null;
-  const priorCredits = profile?.totalAcquiredCredits ?? profile?.acquiredCredits ?? 0;
+  const priorCredits = currentPeriod.priorCredits ?? 0;
 
   const hasOfficial = officialGpa !== null && !Number.isNaN(officialGpa) && priorCredits > 0;
   const hasCurrent = currentPeriod.gpa !== null && currentPeriod.totalCredits > 0;

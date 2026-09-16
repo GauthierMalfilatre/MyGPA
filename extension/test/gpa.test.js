@@ -39,9 +39,15 @@ test("mixed progress: weights multiple started modules by credits", () => {
   assert.equal(result.gpa, 2.5);
 });
 
+test("computeRealGpa reads prior credits from the validations payload", () => {
+  const payload = { ...fixture, totalAcquiredCredits: 120 };
+  const result = computeRealGpa(payload);
+  assert.equal(result.priorCredits, 120);
+});
+
 test("computeOverallGpa blends official GPA with current-period GPA by credits", () => {
-  const currentPeriod = { gpa: 2.5, totalCredits: 8 };
-  const profile = { gpa: "3.65", totalAcquiredCredits: 120 };
+  const currentPeriod = { gpa: 2.5, totalCredits: 8, priorCredits: 120 };
+  const profile = { gpa: "3.65" };
   const result = computeOverallGpa(currentPeriod, profile);
   // (3.65*120 + 2.5*8) / (120+8) = (438+20)/128 = 3.578125
   assert.equal(result.priorCredits, 120);
@@ -50,22 +56,22 @@ test("computeOverallGpa blends official GPA with current-period GPA by credits",
 });
 
 test("computeOverallGpa falls back to official GPA when nothing started yet", () => {
-  const currentPeriod = { gpa: null, totalCredits: 0 };
-  const profile = { gpa: "3.65", totalAcquiredCredits: 120 };
+  const currentPeriod = { gpa: null, totalCredits: 0, priorCredits: 120 };
+  const profile = { gpa: "3.65" };
   const result = computeOverallGpa(currentPeriod, profile);
   assert.equal(result.gpa, 3.65);
 });
 
 test("computeOverallGpa falls back to current-period GPA when no prior credits", () => {
-  const currentPeriod = { gpa: 2.5, totalCredits: 8 };
-  const profile = { gpa: "0.00", totalAcquiredCredits: 0 };
+  const currentPeriod = { gpa: 2.5, totalCredits: 8, priorCredits: 0 };
+  const profile = { gpa: "0.00" };
   const result = computeOverallGpa(currentPeriod, profile);
   assert.equal(result.gpa, 2.5);
 });
 
 test("computeOverallGpa returns null when no data at all", () => {
-  const currentPeriod = { gpa: null, totalCredits: 0 };
-  const profile = { gpa: null, totalAcquiredCredits: 0 };
+  const currentPeriod = { gpa: null, totalCredits: 0, priorCredits: 0 };
+  const profile = { gpa: null };
   const result = computeOverallGpa(currentPeriod, profile);
   assert.equal(result.gpa, null);
 });

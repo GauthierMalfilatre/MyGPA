@@ -111,7 +111,7 @@
 
     const thead = document.createElement("thead");
     const headRow = document.createElement("tr");
-    ["Module", "Note", "Moy. XP", "Comp.", "Créd."].forEach((label) => {
+    ["Module", "Note", "Moy. niveau /5", "Comp.", "Créd."].forEach((label) => {
       const th = document.createElement("th");
       th.textContent = label;
       headRow.appendChild(th);
