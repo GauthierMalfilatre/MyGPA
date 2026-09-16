@@ -5,7 +5,8 @@
   "description": "Calcule et affiche en direct ton vrai GPA sur my.epitech.eu, basé sur les niveaux de compétences (XP) par module plutôt que sur le GPA officiel mis à jour en fin de semestre.",
   "icons": {
     "48": "icons/icon-48.png",
-    "96": "icons/icon-96.png"
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
   },
   "permissions": ["storage"],
   "host_permissions": [
