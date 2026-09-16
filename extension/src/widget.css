@@ -72,6 +72,12 @@
   opacity: 0.7;
 }
 
+#kronk-gpa-widget .kronk-gpa-blend {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
 #kronk-gpa-widget .kronk-gpa-table {
   width: 100%;
   border-collapse: collapse;

@@ -1,5 +1,6 @@
 (function () {
-  const API_PATH = "/api/evaluations/validations/me";
+  const VALIDATIONS_PATH = "/api/evaluations/validations/me";
+  const PROFILE_PATH = "/api/students/profile";
   const REFRESH_INTERVAL_MS = 60 * 1000;
   const AUTH_EVENT = "kronk-gpa:auth-token";
 
@@ -21,8 +22,8 @@
     }
   });
 
-  async function fetchValidations(token) {
-    const response = await fetch(`https://my.epitech.eu${API_PATH}`, {
+  async function fetchJson(path, token) {
+    const response = await fetch(`https://my.epitech.eu${path}`, {
       headers: {
         accept: "application/json, text/plain, */*",
         authorization: `Bearer ${token}`,
@@ -30,7 +31,7 @@
       credentials: "include",
     });
     if (!response.ok) {
-      throw new Error(`API error ${response.status}`);
+      throw new Error(`API error ${response.status} on ${path}`);
     }
     return response.json();
   }
@@ -38,9 +39,13 @@
   async function refreshGpa() {
     if (!latestToken) return;
     try {
-      const payload = await fetchValidations(latestToken);
-      const result = window.KronkGpa.computeRealGpa(payload);
-      window.KronkGpa.renderWidget(result);
+      const [validations, profile] = await Promise.all([
+        fetchJson(VALIDATIONS_PATH, latestToken),
+        fetchJson(PROFILE_PATH, latestToken),
+      ]);
+      const currentPeriod = window.KronkGpa.computeRealGpa(validations);
+      const overall = window.KronkGpa.computeOverallGpa(currentPeriod, profile);
+      window.KronkGpa.renderWidget(overall);
     } catch (err) {
       window.KronkGpa.renderError(err);
     }

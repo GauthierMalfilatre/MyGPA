@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { computeRealGpa } = require("../src/gpa.js");
+const { computeRealGpa, computeOverallGpa } = require("../src/gpa.js");
 const fixture = require("./fixtures/validations-me.json");
 
 test("excludes modules with zero acquired points", () => {
@@ -37,4 +37,35 @@ test("mixed progress: weights multiple started modules by credits", () => {
   // (4.0*2 + 2.0*6) / (2+6) = (8+12)/8 = 2.5
   assert.equal(result.totalCredits, 8);
   assert.equal(result.gpa, 2.5);
+});
+
+test("computeOverallGpa blends official GPA with current-period GPA by credits", () => {
+  const currentPeriod = { gpa: 2.5, totalCredits: 8 };
+  const profile = { gpa: "3.65", totalAcquiredCredits: 120 };
+  const result = computeOverallGpa(currentPeriod, profile);
+  // (3.65*120 + 2.5*8) / (120+8) = (438+20)/128 = 3.578125
+  assert.equal(result.priorCredits, 120);
+  assert.equal(result.officialGpa, 3.65);
+  assert.ok(Math.abs(result.gpa - 3.578125) < 1e-9);
+});
+
+test("computeOverallGpa falls back to official GPA when nothing started yet", () => {
+  const currentPeriod = { gpa: null, totalCredits: 0 };
+  const profile = { gpa: "3.65", totalAcquiredCredits: 120 };
+  const result = computeOverallGpa(currentPeriod, profile);
+  assert.equal(result.gpa, 3.65);
+});
+
+test("computeOverallGpa falls back to current-period GPA when no prior credits", () => {
+  const currentPeriod = { gpa: 2.5, totalCredits: 8 };
+  const profile = { gpa: "0.00", totalAcquiredCredits: 0 };
+  const result = computeOverallGpa(currentPeriod, profile);
+  assert.equal(result.gpa, 2.5);
+});
+
+test("computeOverallGpa returns null when no data at all", () => {
+  const currentPeriod = { gpa: null, totalCredits: 0 };
+  const profile = { gpa: null, totalAcquiredCredits: 0 };
+  const result = computeOverallGpa(currentPeriod, profile);
+  assert.equal(result.gpa, null);
 });

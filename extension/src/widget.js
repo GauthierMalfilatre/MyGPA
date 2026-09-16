@@ -80,13 +80,25 @@
     return tr;
   }
 
-  function renderPanel(result) {
+  function renderPanel(overall) {
     const el = document.getElementById(WIDGET_ID);
     if (!el) return;
     const panel = el.querySelector(".kronk-gpa-panel");
     panel.textContent = "";
 
-    if (!result.includedModules.length) {
+    const summary = document.createElement("div");
+    summary.className = "kronk-gpa-blend";
+    const officialText = overall.officialGpa !== null && overall.officialGpa !== undefined
+      ? overall.officialGpa.toFixed(2)
+      : "—";
+    const currentText = overall.currentPeriod.gpa !== null
+      ? overall.currentPeriod.gpa.toFixed(2)
+      : "—";
+    summary.textContent = `Officiel (${overall.priorCredits} cr.): ${officialText} · Ce semestre (${overall.currentPeriod.totalCredits} cr.): ${currentText}`;
+    panel.appendChild(summary);
+
+    const modules = overall.currentPeriod.includedModules || [];
+    if (!modules.length) {
       const empty = document.createElement("div");
       empty.className = "kronk-gpa-empty";
       empty.textContent = "Aucun module avec progression pour l'instant.";
@@ -107,31 +119,32 @@
     thead.appendChild(headRow);
 
     const tbody = document.createElement("tbody");
-    result.includedModules.forEach((m) => tbody.appendChild(moduleRow(m)));
+    modules.forEach((m) => tbody.appendChild(moduleRow(m)));
 
     table.append(thead, tbody);
     panel.appendChild(table);
   }
 
-  function renderWidget(result) {
+  function renderWidget(overall) {
     const el = ensureWidget();
     if (!el) return;
-    lastResult = result;
+    lastResult = overall;
 
     const valueEl = el.querySelector(".kronk-gpa-value");
     const detailEl = el.querySelector(".kronk-gpa-detail");
     el.classList.remove("kronk-gpa-error");
 
-    if (result.gpa === null) {
+    if (overall.gpa === null) {
       valueEl.textContent = "N/A";
-      detailEl.textContent = "Aucun module avec progression pour l'instant.";
+      detailEl.textContent = "Pas encore de données disponibles.";
     } else {
-      valueEl.textContent = result.gpa.toFixed(2);
-      detailEl.textContent = `${result.includedModules.length} module(s) actif(s) · ${result.totalCredits} crédits · clique pour le détail`;
+      const moduleCount = overall.currentPeriod.includedModules?.length || 0;
+      valueEl.textContent = overall.gpa.toFixed(2);
+      detailEl.textContent = `${moduleCount} module(s) actif(s) ce semestre · clique pour le détail`;
     }
 
     if (expanded) {
-      renderPanel(result);
+      renderPanel(overall);
     }
   }
 

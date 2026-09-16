@@ -67,9 +67,39 @@ function computeRealGpa(validationsPayload) {
   };
 }
 
+function computeOverallGpa(currentPeriod, profile) {
+  const officialGpa = profile?.gpa !== undefined && profile?.gpa !== null
+    ? parseFloat(profile.gpa)
+    : null;
+  const priorCredits = profile?.totalAcquiredCredits ?? profile?.acquiredCredits ?? 0;
+
+  const hasOfficial = officialGpa !== null && !Number.isNaN(officialGpa) && priorCredits > 0;
+  const hasCurrent = currentPeriod.gpa !== null && currentPeriod.totalCredits > 0;
+
+  if (!hasOfficial && !hasCurrent) {
+    return { gpa: null, officialGpa, priorCredits, currentPeriod };
+  }
+  if (hasOfficial && !hasCurrent) {
+    return { gpa: officialGpa, officialGpa, priorCredits, currentPeriod };
+  }
+  if (!hasOfficial && hasCurrent) {
+    return { gpa: currentPeriod.gpa, officialGpa, priorCredits, currentPeriod };
+  }
+
+  const totalCredits = priorCredits + currentPeriod.totalCredits;
+  const weightedSum = officialGpa * priorCredits + currentPeriod.gpa * currentPeriod.totalCredits;
+
+  return {
+    gpa: weightedSum / totalCredits,
+    officialGpa,
+    priorCredits,
+    currentPeriod,
+  };
+}
+
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { computeRealGpa, GRADE_VALUES };
+  module.exports = { computeRealGpa, computeOverallGpa, GRADE_VALUES };
 } else if (typeof window !== "undefined") {
   window.KronkGpa = window.KronkGpa || {};
-  Object.assign(window.KronkGpa, { computeRealGpa, GRADE_VALUES });
+  Object.assign(window.KronkGpa, { computeRealGpa, computeOverallGpa, GRADE_VALUES });
 }
