@@ -1,0 +1,48 @@
+#kronk-gpa-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 160px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #181818;
+  color: #f4f4f2;
+  font-family: "IBM Plex Sans", sans-serif;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  user-select: none;
+}
+
+:root[data-mantine-color-scheme="light"] #kronk-gpa-widget {
+  background: #ffffff;
+  color: #181818;
+  border: 1px solid rgba(24, 24, 24, 0.14);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+#kronk-gpa-widget .kronk-gpa-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+#kronk-gpa-widget .kronk-gpa-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: #013afb;
+}
+
+#kronk-gpa-widget.kronk-gpa-error .kronk-gpa-value {
+  color: #ff5f3a;
+  font-size: 18px;
+}
+
+#kronk-gpa-widget .kronk-gpa-detail {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.7;
+}
