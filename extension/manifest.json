@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MyGPA — Real GPA for My Epitech",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Calcule et affiche en direct ton vrai GPA sur my.epitech.eu, basé sur les niveaux de compétences (XP) par module plutôt que sur le GPA officiel mis à jour en fin de semestre.",
   "icons": {
     "48": "icons/icon-48.png",
