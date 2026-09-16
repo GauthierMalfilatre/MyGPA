@@ -125,14 +125,14 @@
     panel.appendChild(table);
   }
 
-  function renderWidget(overall) {
+  function renderWidget(overall, options = {}) {
     const el = ensureWidget();
     if (!el) return;
     lastResult = overall;
 
     const valueEl = el.querySelector(".kronk-gpa-value");
     const detailEl = el.querySelector(".kronk-gpa-detail");
-    el.classList.remove("kronk-gpa-error");
+    el.classList.remove("kronk-gpa-error", "kronk-gpa-stale");
 
     if (overall.gpa === null) {
       valueEl.textContent = "N/A";
@@ -140,7 +140,14 @@
     } else {
       const moduleCount = overall.currentPeriod.includedModules?.length || 0;
       valueEl.textContent = overall.gpa.toFixed(2);
-      detailEl.textContent = `${moduleCount} module(s) actif(s) ce semestre · clique pour le détail`;
+      const suffix = options.stale
+        ? "· dernière valeur connue, actualisation…"
+        : "· clique pour le détail";
+      detailEl.textContent = `${moduleCount} module(s) actif(s) ce semestre ${suffix}`;
+    }
+
+    if (options.stale) {
+      el.classList.add("kronk-gpa-stale");
     }
 
     if (expanded) {
@@ -154,10 +161,27 @@
     const valueEl = el.querySelector(".kronk-gpa-value");
     const detailEl = el.querySelector(".kronk-gpa-detail");
     el.classList.add("kronk-gpa-error");
+    el.classList.remove("kronk-gpa-stale");
     valueEl.textContent = "Erreur";
     detailEl.textContent = err?.message || "Impossible de calculer le GPA.";
   }
 
+  function renderSessionExpired() {
+    const el = ensureWidget();
+    if (!el) return;
+    const valueEl = el.querySelector(".kronk-gpa-value");
+    const detailEl = el.querySelector(".kronk-gpa-detail");
+    el.classList.add("kronk-gpa-error");
+    el.classList.remove("kronk-gpa-stale");
+    valueEl.textContent = "Session expirée";
+    detailEl.textContent = "Recharge la page et reconnecte-toi pour continuer.";
+  }
+
   window.KronkGpa = window.KronkGpa || {};
-  Object.assign(window.KronkGpa, { mountWidget, renderWidget, renderError });
+  Object.assign(window.KronkGpa, {
+    mountWidget,
+    renderWidget,
+    renderError,
+    renderSessionExpired,
+  });
 })();

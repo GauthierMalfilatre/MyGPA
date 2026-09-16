@@ -45,6 +45,10 @@
   font-size: 18px;
 }
 
+#kronk-gpa-widget.kronk-gpa-stale .kronk-gpa-value {
+  opacity: 0.55;
+}
+
 #kronk-gpa-widget .kronk-gpa-detail {
   margin-top: 6px;
   font-size: 12px;
