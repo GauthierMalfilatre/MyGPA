@@ -1,6 +1,9 @@
 (function () {
   const WIDGET_ID = "kronk-gpa-widget";
+  const GRADE_OPTIONS = ["A", "B", "C", "D", "Fail"];
   let expanded = false;
+  let simulating = false;
+  let simOverrides = {};
   let lastResult = null;
 
   function ensureWidget() {
@@ -77,7 +80,99 @@
       cell(progress),
       cell(String(m.credits))
     );
+    if (m.simulated) tr.classList.add("kronk-gpa-simulated-row");
     return tr;
+  }
+
+  function gradeSelect(moduleId) {
+    const select = document.createElement("select");
+    select.className = "kronk-gpa-grade-select";
+
+    const noneOption = document.createElement("option");
+    noneOption.value = "";
+    noneOption.textContent = "—";
+    select.appendChild(noneOption);
+
+    GRADE_OPTIONS.forEach((grade) => {
+      const opt = document.createElement("option");
+      opt.value = grade;
+      opt.textContent = grade;
+      select.appendChild(opt);
+    });
+
+    select.value = simOverrides[moduleId] ?? "";
+    select.addEventListener("click", (e) => e.stopPropagation());
+    select.addEventListener("change", () => {
+      if (select.value === "") {
+        delete simOverrides[moduleId];
+      } else {
+        simOverrides[moduleId] = select.value;
+      }
+      if (lastResult) renderPanel(lastResult);
+    });
+    return select;
+  }
+
+  function simRow(moduleId, title, credits, realGrade) {
+    const tr = document.createElement("tr");
+    tr.append(
+      cell(title),
+      cell(realGrade || "—"),
+      cell(String(credits))
+    );
+    const selectCell = document.createElement("td");
+    selectCell.appendChild(gradeSelect(moduleId));
+    tr.appendChild(selectCell);
+    return tr;
+  }
+
+  function renderSimulationPanel(overall) {
+    const container = document.createElement("div");
+    container.className = "kronk-gpa-sim";
+
+    const table = document.createElement("table");
+    table.className = "kronk-gpa-table";
+
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["Module", "Note réelle", "Créd.", "Note simulée"].forEach((label) => {
+      const th = document.createElement("th");
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+
+    const tbody = document.createElement("tbody");
+    overall.currentPeriod.includedModules.forEach((m) => {
+      tbody.appendChild(simRow(m.id, m.title, m.credits, m.projectedGrade));
+    });
+    overall.currentPeriod.excludedModules.forEach((m) => {
+      if (!m.credits) return;
+      tbody.appendChild(simRow(m.id, m.title, m.credits, null));
+    });
+
+    table.append(thead, tbody);
+    container.appendChild(table);
+
+    const simulated = window.KronkGpa.simulateGpa(overall, simOverrides);
+    const result = document.createElement("div");
+    result.className = "kronk-gpa-sim-result";
+    const simText = simulated.gpa !== null ? simulated.gpa.toFixed(2) : "—";
+    result.textContent = `GPA simulé : ${simText}`;
+    container.appendChild(result);
+
+    const resetBtn = document.createElement("button");
+    resetBtn.type = "button";
+    resetBtn.className = "kronk-gpa-reset";
+    resetBtn.textContent = "Réinitialiser la simulation";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      simOverrides = {};
+      if (lastResult) renderPanel(lastResult);
+    });
+    container.appendChild(resetBtn);
+
+    return container;
   }
 
   function renderPanel(overall) {
@@ -96,6 +191,22 @@
       : "—";
     summary.textContent = `Officiel (${overall.priorCredits} cr.): ${officialText} · Ce semestre (${overall.currentPeriod.totalCredits} cr.): ${currentText}`;
     panel.appendChild(summary);
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "kronk-gpa-sim-toggle";
+    toggleBtn.textContent = simulating ? "Fermer la simulation" : "Simuler mes notes";
+    toggleBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      simulating = !simulating;
+      renderPanel(overall);
+    });
+    panel.appendChild(toggleBtn);
+
+    if (simulating) {
+      panel.appendChild(renderSimulationPanel(overall));
+      return;
+    }
 
     const modules = overall.currentPeriod.includedModules || [];
     if (!modules.length) {

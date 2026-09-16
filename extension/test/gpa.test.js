@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { computeRealGpa, computeOverallGpa } = require("../src/gpa.js");
+const { computeRealGpa, computeOverallGpa, simulateGpa } = require("../src/gpa.js");
 const fixture = require("./fixtures/validations-me.json");
 
 test("excludes modules with zero acquired points", () => {
@@ -81,4 +81,44 @@ test("computeOverallGpa returns null when no data at all", () => {
   const profile = { gpa: null };
   const result = computeOverallGpa(currentPeriod, profile);
   assert.equal(result.gpa, null);
+});
+
+function buildOverall() {
+  const currentPeriod = computeRealGpa({ ...fixture, totalAcquiredCredits: 120 });
+  return computeOverallGpa(currentPeriod, { gpa: "3.65" });
+}
+
+test("simulateGpa keeps real result unchanged with no overrides", () => {
+  const overall = buildOverall();
+  const simulated = simulateGpa(overall, {});
+  assert.equal(simulated.gpa, overall.gpa);
+  assert.equal(simulated.currentPeriod.totalCredits, overall.currentPeriod.totalCredits);
+});
+
+test("simulateGpa overrides the grade of an already-included module", () => {
+  const overall = buildOverall();
+  // block 244 currently has grade A (value 4.0); force it down to C.
+  const simulated = simulateGpa(overall, { 244: "C" });
+  assert.equal(simulated.currentPeriod.gpa, 2.0);
+});
+
+test("simulateGpa adds a not-yet-started module with a hypothetical grade", () => {
+  const overall = buildOverall();
+  // block 231 (G-AIA-500, 6 credits) is excluded in the real computation.
+  const withoutOverride = overall.currentPeriod.includedModules.some((m) => m.id === 231);
+  assert.equal(withoutOverride, false);
+
+  const simulated = simulateGpa(overall, { 231: "B", 244: "A" });
+  const included = simulated.currentPeriod.includedModules;
+  assert.ok(included.some((m) => m.id === 231 && m.simulated));
+  // (4.0*4 + 3.0*6) / (4+6) = (16+18)/10 = 3.4
+  assert.equal(simulated.currentPeriod.gpa, 3.4);
+});
+
+test("simulateGpa still blends with the official prior GPA", () => {
+  const overall = buildOverall();
+  const simulated = simulateGpa(overall, { 231: "A", 244: "A" });
+  // current period: (4*4 + 4*6)/10 = 4.0; blended with 3.65 over 120 credits.
+  // (3.65*120 + 4.0*10) / 130 = (438+40)/130 = 3.6769...
+  assert.ok(Math.abs(simulated.gpa - 3.676923077) < 1e-6);
 });

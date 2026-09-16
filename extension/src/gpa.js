@@ -68,7 +68,7 @@ function computeRealGpa(validationsPayload) {
     totalCredits,
     priorCredits,
     includedModules: included,
-    excludedModules: excluded.map((b) => ({ id: b.id, title: b.title })),
+    excludedModules: excluded.map((b) => ({ id: b.id, title: b.title, credits: b.credits || 0 })),
   };
 }
 
@@ -102,9 +102,49 @@ function computeOverallGpa(currentPeriod, profile) {
   };
 }
 
+function simulateGpa(overall, overrides) {
+  const currentPeriod = overall.currentPeriod;
+  const activeOverrides = overrides || {};
+
+  const simulatedModules = [];
+
+  for (const m of currentPeriod.includedModules) {
+    const overrideGrade = activeOverrides[m.id];
+    const grade = overrideGrade !== undefined ? overrideGrade : m.projectedGrade;
+    const value = gradeValue(grade);
+    if (value === null) continue;
+    simulatedModules.push({ ...m, projectedGrade: grade, value, simulated: overrideGrade !== undefined });
+  }
+
+  for (const m of currentPeriod.excludedModules) {
+    const overrideGrade = activeOverrides[m.id];
+    if (overrideGrade === undefined) continue;
+    const value = gradeValue(overrideGrade);
+    if (value === null || !m.credits) continue;
+    simulatedModules.push({ ...m, projectedGrade: overrideGrade, value, simulated: true });
+  }
+
+  const totalCredits = simulatedModules.reduce((sum, m) => sum + m.credits, 0);
+  const weightedSum = simulatedModules.reduce((sum, m) => sum + m.value * m.credits, 0);
+  const simulatedCurrentGpa = totalCredits > 0 ? weightedSum / totalCredits : null;
+
+  const simulatedCurrentPeriod = {
+    ...currentPeriod,
+    gpa: simulatedCurrentGpa,
+    totalCredits,
+    includedModules: simulatedModules,
+  };
+
+  const blended = computeOverallGpa(simulatedCurrentPeriod, {
+    gpa: overall.officialGpa !== null && overall.officialGpa !== undefined ? String(overall.officialGpa) : null,
+  });
+
+  return { ...blended, currentPeriod: simulatedCurrentPeriod };
+}
+
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { computeRealGpa, computeOverallGpa, GRADE_VALUES };
+  module.exports = { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES };
 } else if (typeof window !== "undefined") {
   window.KronkGpa = window.KronkGpa || {};
-  Object.assign(window.KronkGpa, { computeRealGpa, computeOverallGpa, GRADE_VALUES });
+  Object.assign(window.KronkGpa, { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES });
 }

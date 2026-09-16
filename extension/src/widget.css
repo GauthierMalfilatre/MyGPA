@@ -116,3 +116,73 @@
 #kronk-gpa-widget .kronk-gpa-table tr:last-child td {
   border-bottom: none;
 }
+
+#kronk-gpa-widget .kronk-gpa-sim-toggle {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: inherit;
+  background: rgba(1, 58, 251, 0.12);
+  border: 1px solid rgba(1, 58, 251, 0.35);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#kronk-gpa-widget .kronk-gpa-sim-toggle:hover {
+  background: rgba(1, 58, 251, 0.2);
+}
+
+#kronk-gpa-widget .kronk-gpa-grade-select {
+  font-family: inherit;
+  font-size: 12px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-grade-select {
+  border: 1px solid rgba(24, 24, 24, 0.25);
+}
+
+#kronk-gpa-widget .kronk-gpa-grade-select option {
+  color: #181818;
+}
+
+#kronk-gpa-widget .kronk-gpa-simulated-row td:first-child {
+  font-style: italic;
+}
+
+#kronk-gpa-widget .kronk-gpa-sim-result {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #013afb;
+}
+
+#kronk-gpa-widget .kronk-gpa-reset {
+  display: block;
+  margin-top: 8px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: inherit;
+  opacity: 0.7;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+:root[data-mantine-color-scheme="light"] #kronk-gpa-widget .kronk-gpa-reset {
+  border: 1px solid rgba(24, 24, 24, 0.2);
+}
+
+#kronk-gpa-widget .kronk-gpa-reset:hover {
+  opacity: 1;
+}
