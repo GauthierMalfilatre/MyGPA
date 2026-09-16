@@ -24,6 +24,12 @@ function averageScore(block) {
   return sum / outcomes.length;
 }
 
+const AT_RISK_GRADES = new Set(["C", "D", "Fail"]);
+
+function isAtRisk(grade) {
+  return AT_RISK_GRADES.has(grade);
+}
+
 function computeRealGpa(validationsPayload) {
   const blocks = validationsPayload?.blocks || [];
 
@@ -51,6 +57,7 @@ function computeRealGpa(validationsPayload) {
       averageScore: averageScore(block),
       validatedCount: block.validatedCount ?? null,
       totalCount: block.totalCount ?? null,
+      atRisk: isAtRisk(block.projectedGrade),
     });
   }
 
@@ -63,12 +70,15 @@ function computeRealGpa(validationsPayload) {
     ?? validationsPayload?.acquiredCredits
     ?? 0;
 
+  const atRiskModules = included.filter((b) => b.atRisk);
+
   return {
     gpa,
     totalCredits,
     priorCredits,
     includedModules: included,
     excludedModules: excluded.map((b) => ({ id: b.id, title: b.title, credits: b.credits || 0 })),
+    atRiskModules,
   };
 }
 
@@ -142,9 +152,63 @@ function simulateGpa(overall, overrides) {
   return { ...blended, currentPeriod: simulatedCurrentPeriod };
 }
 
+function requiredGradeForTarget(overall, targetGpa) {
+  const currentPeriod = overall.currentPeriod;
+  const priorCredits = overall.priorCredits ?? 0;
+  const officialGpa = overall.officialGpa ?? 0;
+  const currentGpa = currentPeriod.gpa ?? 0;
+  const currentCredits = currentPeriod.totalCredits ?? 0;
+
+  const remainingCredits = (currentPeriod.excludedModules || []).reduce(
+    (sum, m) => sum + (m.credits || 0),
+    0
+  );
+
+  if (remainingCredits <= 0) {
+    return {
+      remainingCredits: 0,
+      requiredValue: null,
+      requiredGrade: null,
+      achievable: null,
+      reason: "no-remaining-credits",
+    };
+  }
+
+  const knownCredits = priorCredits + currentCredits;
+  const knownWeightedSum = officialGpa * priorCredits + currentGpa * currentCredits;
+  const totalCredits = knownCredits + remainingCredits;
+
+  // targetGpa = (knownWeightedSum + x * remainingCredits) / totalCredits, solve for x.
+  const requiredValue = (targetGpa * totalCredits - knownWeightedSum) / remainingCredits;
+
+  const gradeEntries = Object.entries(GRADE_VALUES).sort((a, b) => a[1] - b[1]);
+  let requiredGrade = null;
+  for (const [grade, value] of gradeEntries) {
+    if (value >= requiredValue) {
+      requiredGrade = grade;
+      break;
+    }
+  }
+
+  const maxValue = Math.max(...Object.values(GRADE_VALUES));
+
+  return {
+    remainingCredits,
+    requiredValue,
+    requiredGrade,
+    achievable: requiredValue <= maxValue,
+  };
+}
+
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES };
+  module.exports = { computeRealGpa, computeOverallGpa, simulateGpa, requiredGradeForTarget, GRADE_VALUES };
 } else if (typeof window !== "undefined") {
   window.MyGpa = window.MyGpa || {};
-  Object.assign(window.MyGpa, { computeRealGpa, computeOverallGpa, simulateGpa, GRADE_VALUES });
+  Object.assign(window.MyGpa, {
+    computeRealGpa,
+    computeOverallGpa,
+    simulateGpa,
+    requiredGradeForTarget,
+    GRADE_VALUES,
+  });
 }

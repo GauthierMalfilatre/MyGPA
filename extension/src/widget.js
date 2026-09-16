@@ -71,16 +71,18 @@
       ? `${m.averageScore.toFixed(0)}/500`
       : "—";
     const progress = m.totalCount ? `${m.validatedCount ?? 0}/${m.totalCount}` : "—";
+    const gradeLabel = m.atRisk ? `⚠ ${m.projectedGrade}` : m.projectedGrade;
 
     const tr = document.createElement("tr");
     tr.append(
       cell(m.title),
-      cell(m.projectedGrade),
+      cell(gradeLabel),
       cell(avg),
       cell(progress),
       cell(String(m.credits))
     );
     if (m.simulated) tr.classList.add("mygpa-simulated-row");
+    if (m.atRisk) tr.classList.add("mygpa-at-risk-row");
     return tr;
   }
 
@@ -175,6 +177,51 @@
     return container;
   }
 
+  function renderTargetSection(overall) {
+    const container = document.createElement("div");
+    container.className = "mygpa-target";
+
+    const label = document.createElement("label");
+    label.className = "mygpa-target-label";
+    label.textContent = "Objectif GPA";
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.step = "0.01";
+    input.min = "0";
+    input.max = "4";
+    input.className = "mygpa-target-input";
+    input.placeholder = "ex: 3.70";
+    input.addEventListener("click", (e) => e.stopPropagation());
+
+    const result = document.createElement("span");
+    result.className = "mygpa-target-result";
+
+    function updateResult() {
+      const target = parseFloat(input.value);
+      if (Number.isNaN(target)) {
+        result.textContent = "";
+        return;
+      }
+      const req = window.MyGpa.requiredGradeForTarget(overall, target);
+      if (req.reason === "no-remaining-credits") {
+        result.textContent = "Tous les crédits du semestre sont déjà pris en compte.";
+      } else if (!req.achievable) {
+        result.textContent = `Non atteignable (nécessiterait mieux que A sur les ${req.remainingCredits} cr. restants).`;
+      } else {
+        result.textContent = `Besoin de ${req.requiredGrade} en moyenne sur les ${req.remainingCredits} cr. restants.`;
+      }
+    }
+
+    input.addEventListener("input", (e) => {
+      e.stopPropagation();
+      updateResult();
+    });
+
+    container.append(label, input, result);
+    return container;
+  }
+
   function renderPanel(overall) {
     const el = document.getElementById(WIDGET_ID);
     if (!el) return;
@@ -191,6 +238,8 @@
       : "—";
     summary.textContent = `Officiel (${overall.priorCredits} cr.): ${officialText} · Ce semestre (${overall.currentPeriod.totalCredits} cr.): ${currentText}`;
     panel.appendChild(summary);
+
+    panel.appendChild(renderTargetSection(overall));
 
     const toggleBtn = document.createElement("button");
     toggleBtn.type = "button";
@@ -243,18 +292,21 @@
 
     const valueEl = el.querySelector(".mygpa-value");
     const detailEl = el.querySelector(".mygpa-detail");
-    el.classList.remove("mygpa-error", "mygpa-stale");
+    el.classList.remove("mygpa-error", "mygpa-stale", "mygpa-has-risk");
 
     if (overall.gpa === null) {
       valueEl.textContent = "N/A";
       detailEl.textContent = "Pas encore de données disponibles.";
     } else {
       const moduleCount = overall.currentPeriod.includedModules?.length || 0;
+      const riskCount = overall.currentPeriod.atRiskModules?.length || 0;
       valueEl.textContent = overall.gpa.toFixed(2);
       const suffix = options.stale
         ? "· dernière valeur connue, actualisation…"
         : "· clique pour le détail";
-      detailEl.textContent = `${moduleCount} module(s) actif(s) ce semestre ${suffix}`;
+      const riskSuffix = riskCount > 0 ? ` · ⚠ ${riskCount} à risque` : "";
+      detailEl.textContent = `${moduleCount} module(s) actif(s) ce semestre${riskSuffix} ${suffix}`;
+      if (riskCount > 0) el.classList.add("mygpa-has-risk");
     }
 
     if (options.stale) {

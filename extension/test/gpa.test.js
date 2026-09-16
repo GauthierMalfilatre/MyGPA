@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { computeRealGpa, computeOverallGpa, simulateGpa } = require("../src/gpa.js");
+const { computeRealGpa, computeOverallGpa, simulateGpa, requiredGradeForTarget } = require("../src/gpa.js");
 const fixture = require("./fixtures/validations-me.json");
 
 test("excludes modules with zero acquired points", () => {
@@ -121,4 +121,55 @@ test("simulateGpa still blends with the official prior GPA", () => {
   // current period: (4*4 + 4*6)/10 = 4.0; blended with 3.65 over 120 credits.
   // (3.65*120 + 4.0*10) / 130 = (438+40)/130 = 3.6769...
   assert.ok(Math.abs(simulated.gpa - 3.676923077) < 1e-6);
+});
+
+test("flags included modules at grade C/D/Fail as at-risk", () => {
+  const mixed = {
+    blocks: [
+      { id: 1, title: "A", learningOutcomes: [{ acquiredPoints: 5 }], projectedGrade: "A", credits: 2 },
+      { id: 2, title: "B", learningOutcomes: [{ acquiredPoints: 3 }], projectedGrade: "C", credits: 6 },
+      { id: 3, title: "D", learningOutcomes: [{ acquiredPoints: 1 }], projectedGrade: "D", credits: 3 },
+    ],
+  };
+  const result = computeRealGpa(mixed);
+  assert.deepEqual(result.atRiskModules.map((m) => m.id), [2, 3]);
+});
+
+test("requiredGradeForTarget returns no-remaining-credits when the semester is fully accounted for", () => {
+  const overall = buildOverall();
+  const fullyAccounted = {
+    ...overall,
+    currentPeriod: { ...overall.currentPeriod, excludedModules: [] },
+  };
+  const result = requiredGradeForTarget(fullyAccounted, 3.8);
+  assert.equal(result.remainingCredits, 0);
+  assert.equal(result.requiredGrade, null);
+  assert.equal(result.reason, "no-remaining-credits");
+});
+
+test("requiredGradeForTarget computes the grade value needed on remaining credits", () => {
+  const overall = buildOverall();
+  // priorCredits=120 @3.65, current period 4 credits @4.0 (module 244),
+  // remaining credits = 2+6+6+2 = 16 (modules 322, 232, 231, 238).
+  // target 3.7: (3.7*140 - (3.65*120 + 4.0*4)) / 16 = (518 - (438+16)) / 16 = 64/16 = 4.0
+  const result = requiredGradeForTarget(overall, 3.7);
+  assert.equal(result.remainingCredits, 16);
+  assert.ok(Math.abs(result.requiredValue - 4.0) < 1e-9);
+  assert.equal(result.requiredGrade, "A");
+  assert.equal(result.achievable, true);
+});
+
+test("requiredGradeForTarget reports unachievable targets", () => {
+  const overall = buildOverall();
+  // An unreasonably high target requires more than grade A (value > 4.0) on remaining credits.
+  const result = requiredGradeForTarget(overall, 3.99);
+  assert.equal(result.achievable, false);
+});
+
+test("requiredGradeForTarget picks the lowest grade that still meets the target", () => {
+  const overall = buildOverall();
+  // target 3.66: required value = (3.66*140 - 454) / 16 = 3.65, which sits
+  // between B (3.0) and A (4.0), so A is the lowest grade that clears it.
+  const result = requiredGradeForTarget(overall, 3.66);
+  assert.equal(result.requiredGrade, "A");
 });
